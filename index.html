@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Antler Winter Touch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f3f5;--surface:#ffffff;--ink:#1c2128;--muted:#59626e;--rule:#d6dae0;
+  --red:#b3141d;--red-ink:#ffffff;--soft:#f7e2e3;--amber:#a5660c;--done:#1c2128;
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#13161a;--surface:#1c2026;--ink:#eceef1;--muted:#a3acb7;--rule:#323840;
+    --red:#e8474e;--red-ink:#ffffff;--soft:#3a1c1f;--amber:#e3a33a;--done:#eceef1;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13161a;--surface:#1c2026;--ink:#eceef1;--muted:#a3acb7;--rule:#323840;
+  --red:#e8474e;--red-ink:#ffffff;--soft:#3a1c1f;--amber:#e3a33a;--done:#eceef1;color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:18px 18px 150px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:10px;font:700 23px/1 "Barlow Condensed","Arial Narrow",sans-serif}
+.mark i{display:block;width:10px;height:26px;background:var(--red);border-radius:2px}
+.pos{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
+select{font:500 15px "Barlow",system-ui,sans-serif;color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);border-radius:6px;padding:7px 10px}
+.tabs{display:flex;gap:2px;margin:16px 0 0;border-bottom:2px solid var(--rule);overflow-x:auto}
+.tab{background:none;border:0;padding:10px 12px;font:600 16px "Barlow",system-ui,sans-serif;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--red)}
+h1.date{font:700 clamp(42px,11vw,68px)/.92 "Barlow Condensed","Arial Narrow",sans-serif;margin:22px 0 8px;letter-spacing:-.005em}
+.kick{margin:0;font-weight:600;font-size:18px}
+.sub{margin:2px 0 0;color:var(--muted)}
+.status{margin:14px 0 0;padding:10px 14px;background:var(--soft);border-left:4px solid var(--red);border-radius:0 6px 6px 0;font-weight:500}
+.strip{display:grid;grid-template-columns:34px repeat(13,minmax(0,1fr));gap:3px;margin:22px 0 4px}
+.strip .lab{font:600 13px/1 "Barlow Condensed",sans-serif;color:var(--muted);display:flex;align-items:center}
+.strip .wk{font:600 13px/1 "Barlow Condensed",sans-serif;color:var(--muted);text-align:center;padding-bottom:3px}
+.cell{aspect-ratio:1;min-height:18px;border:1.5px solid var(--rule);background:var(--surface);border-radius:3px;padding:0;cursor:pointer;position:relative}
+.cell.done{background:var(--done);border-color:var(--done)}
+.cell.today{border-color:var(--red);border-width:2.5px}
+.cell.sel{background:var(--red);border-color:var(--red)}
+.cell.test::after{content:"";position:absolute;right:2px;top:2px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.phases{display:grid;grid-template-columns:34px repeat(13,minmax(0,1fr));gap:3px;margin-bottom:6px}
+.phases span{font:600 12px/1.1 "Barlow Condensed",sans-serif;color:var(--muted);border-top:2px solid var(--rule);padding-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend{font-size:13px;color:var(--muted);margin:0 0 8px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin:0 4px 0 10px}
+.legend b:first-child{margin-left:0}
+.block{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;padding:20px 0;border-top:1px solid var(--rule)}
+.block:first-of-type{margin-top:12px}
+.rail .n{font:700 36px/1 "Barlow Condensed",sans-serif;color:var(--red)}
+.rail .m{font-size:13px;color:var(--muted);margin-top:4px}
+.block h3{font:700 25px/1.08 "Barlow Condensed","Arial Narrow",sans-serif;margin:0 0 6px}
+.block .focus{display:inline-block;font-size:14px;font-weight:600;color:var(--red);margin:0 0 4px}
+.rx{font-weight:600;margin:0 0 8px}
+.block p{margin:0 0 8px}
+.block ol,.block ul{margin:6px 0 10px;padding-left:22px}
+.block li{margin:3px 0}
+.cues{border-left:3px solid var(--rule);padding:2px 0 2px 12px;margin:8px 0 12px}
+.cues div{margin:2px 0}
+.note{font-size:15px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.btn{font:600 15px "Barlow",system-ui,sans-serif;padding:9px 14px;border-radius:6px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--red);border-color:var(--red);color:var(--red-ink)}
+.check{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted);cursor:pointer}
+.check input{width:20px;height:20px;accent-color:var(--red)}
+.picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.log{margin:22px 0 0;padding:20px;background:var(--surface);border:1px solid var(--rule);border-radius:8px}
+.log h2{font:700 26px/1.1 "Barlow Condensed",sans-serif;margin:0 0 6px}
+.log p{margin:0 0 6px}
+.prose h2{font:700 30px/1.1 "Barlow Condensed","Arial Narrow",sans-serif;margin:30px 0 8px}
+.prose h3{font:700 21px/1.15 "Barlow Condensed",sans-serif;margin:18px 0 4px}
+.prose p{margin:0 0 12px;max-width:68ch}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:420px;margin:8px 0 14px;font-size:16px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule)}
+th{font:600 15px "Barlow",sans-serif;color:var(--muted)}
+td.tier{font:700 19px "Barlow Condensed",sans-serif}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:8px;vertical-align:-1px;border:1px solid var(--rule)}
+.timer{position:fixed;left:0;right:0;bottom:0;z-index:20;display:none;background:var(--ink);color:var(--bg);padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px))}
+.timer.on{display:block}
+.timer.work{background:var(--red);color:var(--red-ink)}
+.timer.cue{background:#ffffff;color:#000000}
+.tin{max-width:760px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center}
+.tt{font-size:14px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp{font:700 22px/1.1 "Barlow Condensed",sans-serif}
+.clock{font:700 50px/1 "Barlow Condensed",sans-serif;font-variant-numeric:tabular-nums}
+.tbtns{display:flex;flex-direction:column;gap:6px}
+.tbtns button{font:600 14px "Barlow",sans-serif;padding:6px 12px;border-radius:5px;border:1.5px solid currentColor;background:transparent;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.timer :focus-visible{outline-color:currentColor}
+@media (max-width:420px){.block{grid-template-columns:40px minmax(0,1fr);gap:10px}.rail .n{font-size:30px}.strip,.phases{grid-template-columns:28px repeat(13,minmax(0,1fr));gap:2px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark"><i aria-hidden="true"></i>Antler Winter Touch</div>
+    <label class="pos">Position
+      <select id="pos">
+        <option value="">Choose</option>
+        <option value="wing">Winger</option>
+        <option value="ob">Outside back</option>
+        <option value="am">Attacking mid</option>
+        <option value="st">Striker</option>
+      </select>
+    </label>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-view="session" aria-selected="true">Session</button>
+    <button class="tab" role="tab" data-view="plan" aria-selected="false">How it works</button>
+    <button class="tab" role="tab" data-view="tests" aria-selected="false">Tests and juggling club</button>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<div class="timer" id="timer" role="region" aria-label="Interval timer">
+  <div class="tin">
+    <div><div class="tt" id="tTitle"></div><div class="tp" id="tPhase"></div></div>
+    <div class="clock" id="tClock">0:00</div>
+    <div class="tbtns"><button id="tPause" type="button">Pause</button><button id="tStop" type="button">Close</button></div>
+  </div>
+</div>
+
+<script>
+/* Coach: paste the prefill link from the tracker sheet's Links tab here. */
+const FORM_PREFILL = "https://docs.google.com/forms/d/e/1FAIpQLSd6ktbfZJGfLcS5TZC1uZDc73a__YOjr4FXcHp-QdM_WASOQQ/viewform?usp=pp_url&entry.31083359=";
+/* Coach: optional demo videos, keyed like "tue-3" or "thu-4" (https links only). */
+const DEMOS = {"mon-1":"https://www.youtube.com/watch?v=D1fzbTaXUz8","mon-2":"https://www.youtube.com/watch?v=carTOij1P7g","mon-3":"https://www.youtube.com/watch?v=VJtavpOhK6s","mon-4":"https://www.youtube.com/watch?v=JlPfNgGNbqw","mon-5":"https://www.youtube.com/watch?v=xJGHMjrHU3c","mon-6":"https://www.youtube.com/watch?v=I9D0iJxrvQU","mon-7":"https://www.youtube.com/watch?v=bmih3V54v6Y","mon-8":"https://www.youtube.com/watch?v=8xfWkNLdVYE","mon-9":"https://www.youtube.com/watch?v=-De9EQ0xZmQ","mon-10":"https://www.youtube.com/watch?v=phYwvJLMfS0","mon-11":"https://www.youtube.com/watch?v=2q6-vP_jE6I","mon-12":"https://www.youtube.com/watch?v=XeKNARcJ6Wo","mon-13":"https://www.youtube.com/watch?v=quDH7EgDWRI","tue-1":"https://www.youtube.com/watch?v=Z-3WzTcS0Xk","tue-2":"https://www.youtube.com/watch?v=dyHOunNH30M","tue-3":"https://www.youtube.com/watch?v=_xek5HWdI7g","tue-4":"https://www.youtube.com/watch?v=M7BZBXWBpoM","tue-5":"https://www.youtube.com/watch?v=ZA8Ktd6l-PI","tue-6":"https://www.youtube.com/watch?v=7z0GQ0IC6u8","tue-7":"https://www.youtube.com/watch?v=6dcW1VhK3Yw","tue-8":"https://www.youtube.com/watch?v=7nFvh7ITZm8","tue-9":"https://www.youtube.com/shorts/pkfoz--LZsM","tue-10":"https://www.youtube.com/watch?v=FqDfXbgyJdg","tue-11":"https://www.youtube.com/watch?v=lEaIPPTLPP0","tue-12":"https://www.youtube.com/watch?v=TPHEzk__jbQ","tue-13":"https://www.youtube.com/watch?v=NkLIHc4zHdE","thu-1":"https://www.youtube.com/watch?v=XDtFycaf6sk","thu-2":"https://www.youtube.com/watch?v=tptS44T2_Lc","thu-3":"https://www.youtube.com/watch?v=YpuAC0whCY4","thu-4":"https://www.youtube.com/watch?v=RbHfV-R4UAc","thu-5":"https://www.youtube.com/watch?v=Gms0BBPdGiY","thu-6":"https://www.youtube.com/watch?v=_xek5HWdI7g","thu-7":"https://www.youtube.com/watch?v=L978KcAfZAo","thu-8":"https://vimeo.com/74923160","thu-9":"https://www.youtube.com/watch?v=RmmWrETzWfA","thu-10":"https://www.youtube.com/watch?v=Gms0BBPdGiY","thu-11":"https://www.youtube.com/watch?v=RbHfV-R4UAc","thu-12":"https://www.youtube.com/watch?v=YpuAC0whCY4"};
+
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DAYNAMES={Mon:"Monday",Tue:"Tuesday",Thu:"Thursday"};
+const DAYS=[["Mon",0],["Tue",1],["Thu",3]];
+const TESTS=["W01 Mon","W07 Mon","W13 Thu"];
+const SESSIONS=[];
+for(let w=1;w<=13;w++){for(const [d,off] of DAYS){
+  const dt=new Date(2026,10,30+(w-1)*7+off);
+  const code="W"+String(w).padStart(2,"0")+" "+d;
+  SESSIONS.push({i:SESSIONS.length,w,d,code,date:dt,label:code+" ("+MONTHS[dt.getMonth()]+" "+dt.getDate()+")"});
+}}
+const phaseOf=w=>w<=4?1:w<=8?2:w<=12?3:4;
+const PHASES={
+  1:{name:"Foundation",note:"Clean technique at 60–75% speed. Slow is fine; sloppy is not."},
+  2:{name:"Speed",note:"Same skills, faster. Every rep finishes with an explosive escape."},
+  3:{name:"Game speed",note:"Random cues and the clock. You react instead of rehearse."},
+  4:{name:"Prove it",note:"Best-of sessions, then final testing on Thursday."}
+};
+const THEMES={Mon:"First touch",Tue:"1v1: square up, sell, escape",Thu:"Turns, position work and juggling"};
+
+/* ---------- Content ---------- */
+const WARM={
+  1:{rx:"8 × 30 s on, 15 s off",timer:{work:30,rest:15,rounds:8},items:[
+    "Toe taps: alternate soles on top of the ball, stay on your toes",
+    "Bells: inside-inside between your feet",
+    "Sole roll across with your right foot",
+    "Sole roll across with your left foot",
+    "Pull-push, right: pull back with the sole, push forward with the laces",
+    "Pull-push, left",
+    "V-pulls: pull back with the sole, push out at an angle with the inside of the same foot; alternate feet",
+    "Outside-inside: small outside touch, then inside touch with one foot (right 15 s, left 15 s)"]},
+  2:{rx:"8 × 30 s on, 15 s off",timer:{work:30,rest:15,rounds:8},items:[
+    "Toe taps while circling all the way around the ball",
+    "Croquetas in place: inside of one foot to inside of the other",
+    "L-pull, right: pull back with the sole, push behind your standing leg with the inside of the same foot",
+    "L-pull, left",
+    "Pull-push outside: pull back with the sole, push away with the outside of the same foot; alternate feet",
+    "Sole stop and go: roll forward, stop it dead, explode two touches with the outside",
+    "Scissors in place, alternating feet",
+    "Your three favorite patterns, as fast as clean allows"]},
+  3:{rx:"8 × 30 s on, 15 s off, random-cue mode",timer:{work:30,rest:15,rounds:8,random:true},note:"Same patterns as the Speed phase. On every double beep, explode with two outside-foot touches away, then come straight back into the pattern.",items:[
+    "Toe taps circling the ball","Croquetas in place","L-pull, right","L-pull, left",
+    "Pull-push outside, alternating","Sole stop and go","Scissors in place","Your three favorite patterns"]}
+};
+
+const MON=[null,
+ {name:"Across the body",text:"Pass into the wall, let the ball run across your body and receive it with the foot farther from the ball. First touch goes out to the side, then pass with that foot. Next rep goes the other way.",cues:["Open your hips before the ball arrives","Receive with the far foot","First touch lands 1–2 feet out in front, never under you","The ball never stops dead"]},
+ {name:"Outside-foot cushion",text:"Receive with the outside of the foot nearest the ball and steer it away from an imaginary defender on that side, then pass with the other foot.",cues:["Toe down and turned in","Contact on the pinky-toe side","Touch goes away from pressure, not back into it"]},
+ {name:"Sole stop and play",text:"Stop the return with your sole, roll it one step to the side, pass. Second half of each set: sole-roll it straight into space without stopping it first.",cues:["Sole on top of the ball, heel down","Roll it to where your next pass leaves from","Hips over the ball"]},
+ {name:"Out of the air",text:"Throw the ball off the wall so it comes back in the air, or toss it 10+ feet straight up. Kill it with your laces, thigh or inside of the foot so it drops within one step, then pass it back.",cues:["Get under the flight early","Pull the surface down as the ball arrives","Relaxed ankle, not stiff"]},
+ {name:"Holiday mixtape",text:"One set each of across the body, outside cushion, sole stop and out of the air. Grade yourself 1–5 on each. Your lowest grade gets a fifth set.",cues:["Honest grades","Write the lowest one in your log notes"]},
+ {name:"Receive on the half-turn",text:"Stand side-on so you can see the wall and the open room. Receive with your back foot and take your first touch forward past a marker 2 yards to the side, as if you just turned to face goal.",cues:["Shoulder check before every pass hits the wall","Hips open to the space, not square to the wall","First touch goes forward, not sideways"]},
+ {name:"Half-turn, weak side first",text:"Same as last week, but every set starts on your weak side. After testing, two sets each way.",cues:["Weak side gets the same speed","Check, open, forward"]},
+ {name:"Beat the chair",text:"Put a chair (the defender) one yard off your passing line. Your first touch goes past the chair’s side, then two hard touches to get away.",cues:["Pick a side before the ball arrives","Your first touch is a weapon, not a stop","Accelerate out of the touch"]},
+ {name:"Bouncers",text:"Hit the wall at different heights so returns come back on different bounces. Control each one before its second bounce with whatever surface it asks for.",cues:["Read the bounce early and move your feet","Sole for short hops, laces or thigh for higher ones","Ball dead within one step"]},
+ {name:"Weak-foot Monday",text:"Everything with your weaker foot: receive, touch and pass. Set 1 across the body, set 2 outside cushion, set 3 sole, then half-turn for the rest.",cues:["Slow the pass down if you have to, but never switch feet","Strong-foot standard on every touch"]},
+ {name:"Scan and choose",text:"Markers 3 yards behind you on each side. Before every return, check over a shoulder and pick a side; your first touch turns you that way, two touches out, come back. In random-cue mode, a double beep means that side just got blocked: turn the other way.",cues:["Check before the ball hits the wall, not after","Decide early, touch once, go"]},
+ {name:"Speed rounds",text:"Short rounds against the clock. Odd sets two-touch, even sets one-touch. Count passes that hit the wall and beat your number from the last speed set you did.",cues:["Stay on your toes","Pass with the inside, firm and low"],rx:"8 × 30 s, 15 s rest",timer:{work:30,rest:15,rounds:8}},
+ {name:"Best of",text:"Pick the two Monday touches that felt worst this winter. Two sets each.",cues:["Work on the weakness, not the favorite"]}
+];
+const MON_RX={1:["4 sets × 2 min, 30 s rest. Stand 3–4 yards from the wall; switch your starting foot each set.",{work:120,rest:30,rounds:4}],
+  2:["4 × 2 min, 30 s rest, 5–6 yards from the wall. Pass harder, receive faster.",{work:120,rest:30,rounds:4}],
+  3:["6 × 60 s, 20 s rest at game pace. Count clean reps; log your best set in the notes.",{work:60,rest:20,rounds:6}]};
+const MON_B={
+ 1:{name:"Gates",rx:"4 × 90 s, 30 s rest",timer:{work:90,rest:30,rounds:4},text:"Two gates (two shoes 1 yard apart), 2 yards to your left and 2 yards to your right. Pass, receive and take your first touch through a gate, dribble back, repeat. Alternate gates.",cues:["Through the gate in one touch","Look at the gate before the ball arrives"]},
+ 2:{name:"Gate and go",rx:"4 × 90 s, 30 s rest",timer:{work:90,rest:30,rounds:4},text:"Same gates. After your first touch through the gate, hit this week’s Tuesday move on a marker 2 yards past it and explode back.",cues:["Under 6 seconds from pass to finish","Full-speed escape every rep"]},
+ 3:{name:"Pressure clock",rx:"6 × 45 s, 30 s rest",timer:{work:45,rest:30,rounds:6},text:"Rounds through the gates against the clock. Count clean reps (one touch through, under control). Beat your best round from last week.",cues:["Quality counts, sloppy reps don’t","Write your best round in your log notes"]}
+};
+
+const SSE=[["Square up","Dribble at the chair. At about 2 yards, shorten your steps, get your hips square to the defender, and keep the ball where you can go either way."],
+  ["Sell","Hit the move. Sell it with your eyes, shoulders and hips; the defender reads your body, not the ball."],
+  ["Escape","Explode past with the outside of your foot: two hard touches into the space behind the chair, then 3 yards at full speed."]];
+const TUE=[null,
+ {name:"Shoulder drop",text:"Without touching the ball, drop your shoulder and step hard to one side. Push off that foot and take the ball the other way with the outside of your other foot.",cues:["Big step, little ball","Head and shoulder go with the fake"]},
+ {name:"Scissors",text:"Swing your right foot around the front of the ball from inside to outside and plant it. Take the ball the other way with the outside of your left foot. Mirror it.",cues:["The ball stays still while your foot moves","Plant and push off the scissors foot"]},
+ {name:"Fake cross and go",text:"Wind up like you’re crossing or shooting with your right foot. Stop the leg just over the ball, then push it forward and away with the outside of the same foot.",cues:["The wind-up has to look real","Push past the chair’s front foot"]},
+ {name:"Matthews",text:"Small inside touch (or just a lean) to your left with your right foot, then snap the ball right with the outside of the same foot.",cues:["Lean, then snap","Same foot for both touches; explode on the second"]},
+ {name:"Holiday review",text:"Pick your two best moves from weeks 1–4. Half your reps with each, both directions.",cues:["Full speed only if it’s clean"]},
+ {name:"Stop and go",text:"Dribble at the chair, stop the ball dead with your sole and freeze for a beat. As the defender relaxes, explode past with the outside of the foot.",cues:["The change of pace is the move","Your first step after the stop is your fastest"]},
+ {name:"Double scissors",text:"Scissors with one foot, then the other, then escape with the outside of the foot that takes you away from the defender.",cues:["Rhythm: right, left, go","Keep your body over the ball"]},
+ {name:"Croqueta and go",text:"Shift the ball sideways from the inside of one foot to the inside of the other, across the chair’s front, then burst forward with the outside of the receiving foot.",cues:["Short, quick shift under your hips","Burst straight out of the shift"]},
+ {name:"Pull-V escape",text:"Pull the ball back with your sole as if retreating, then push it away at an angle with the outside of the same foot.",cues:["The pull invites the defender in","Escape at a 45-degree angle"]},
+ {name:"Scissors into Matthews",text:"Scissors to show one way, then Matthews to go the other way. Two moves, one escape.",cues:["Don’t pause between moves","Second move is the one that beats him"]},
+ {name:"Move and counter",text:"Lead with your go-to move. Every third rep, pretend the defender didn’t bite: hit a second move to the other side before you escape.",cues:["Read, then counter","Escape with the outside every time"]},
+ {name:"Your signature",text:"Your two best moves at full speed in random-cue mode. This is your 1v1 set going into the season.",cues:["Same quality on both feet"]},
+ {name:"Best of",text:"Your best two moves, both feet, full speed. Film one rep on each foot and send it to Coach.",cues:["Square up, sell, escape, every rep"]}
+];
+const TUE_RX={1:["5 sets of 6 reps (3 each way), 30 s rest. First set at walking pace, then 75%.",{work:90,rest:30,rounds:5}],
+  2:["6 sets of 6 reps at full speed, 30 s rest. Walk back, reset, go.",{work:90,rest:30,rounds:6}],
+  3:["6 × 60 s, 30 s rest, random-cue mode. Dribble around your space; on every double beep, attack the chair from wherever you are.",{work:60,rest:30,rounds:6,random:true}]};
+const TUE_B={
+ 1:{name:"Outside-foot box",rx:"6 × 60 s, 20 s rest, alternate feet",timer:{work:60,rest:20,rounds:6},text:"A 3×3 yard box of four markers. Dribble around it using only the outside of your right foot (clockwise), then only the outside of your left (counterclockwise).",cues:["Touch every step","Toe down, contact on the pinky-toe side"]},
+ 2:{name:"Slalom and escape",rx:"5 × 60 s, 30 s rest",timer:{work:60,rest:30,rounds:5},text:"Five markers in a line, 1 yard apart. Slalom using outside touches only, then hit the move of the week at the last marker and burst 3 yards.",cues:["Small touches through the slalom, big one on the escape"]},
+ 3:{name:"Shadow defender",rx:"6 × 45 s, 30 s rest, random-cue mode",timer:{work:45,rest:30,rounds:6,random:true},text:"Dribble freely at half speed. On every double beep, hit the move of the week toward the nearest marker and explode out with two outside-foot touches.",cues:["Half speed to full speed in one step"]}
+};
+
+const THU=[null,
+ {name:"Inside hook",text:"Reach past the ball, hook it back with the inside of your foot, and go back the way you came.",cues:["Plant beside the ball, not behind it","Get low before you turn"]},
+ {name:"Outside hook",text:"Reach past the ball and hook it back with the outside of your foot, turning away from the defender.",cues:["Body between the defender and the ball","Turn on the balls of your feet"]},
+ {name:"Drag-back",text:"Stop the ball with your sole, drag it back, spin toward it, and push away with your other foot.",cues:["Drag it, don’t stab it","Spin fast, then go"]},
+ {name:"Cruyff",text:"Fake a pass, then use the inside of the same foot to drag the ball behind your standing leg and go the other way.",cues:["Sell the pass","Ball goes close behind the standing leg"]},
+ {name:"Holiday turn tour",text:"One set each of inside hook, outside hook, drag-back and Cruyff, then a free set with your best one.",cues:["Same speed into every turn"]},
+ {name:"Fake-shot hook",text:"Wind up a shot, then hook the ball back with the inside of the same foot instead of striking it.",cues:["The fake has to look like a strike","Hook and accelerate"]},
+ {name:"L-turn",text:"Pull the ball back with your sole, then push it behind your standing leg with the inside of the same foot and go 90 degrees the other way.",cues:["Pull and push in one motion","Low center of gravity"]},
+ {name:"Stop turn",text:"Step on the ball to stop it, step past it with your other foot, spin back, and go with the first foot.",cues:["Stop it dead, then go","Explode out of the spin"]},
+ {name:"Roulette",text:"Sole drag back with your right foot as you spin, then a second sole drag with your left to finish the spin and go.",cues:["Keep your body between the chair and the ball","Two sole touches, one smooth spin"]},
+ {name:"Turn and burst",text:"Any turn you own, then three explosive touches. The clock is the defender: count turns per set and beat it.",cues:["Fastest touch is the first one after the turn"]},
+ {name:"Turn combo",text:"Cruyff into a drag-back: show one turn, then turn again before you leave.",cues:["Second turn comes before the defender recovers"]},
+ {name:"Random-cue turns",text:"Dribble anywhere; on a double beep, pick the turn that fits the space you’re in and go.",cues:["Your feet decide, not your brain"]},
+ {name:"Final tests",text:"",cues:[]}
+];
+const THU_RX={1:["5 × 45 s, 30 s rest. Two lines 5 yards apart; dribble to a line, turn, go back. Alternate feet every turn.",{work:45,rest:30,rounds:5}],
+  2:["5 × 45 s, 30 s rest. After every turn, two hard touches to get away. Count turns per set; log your best in the notes.",{work:45,rest:30,rounds:5}],
+  3:["6 × 45 s, 30 s rest, random-cue mode. Dribble anywhere; on every double beep, turn 180 immediately and accelerate.",{work:45,rest:30,rounds:6,random:true}]};
+
+const POS={
+ wing:{label:"Winger",1:{name:"Down the line",text:"Pass into the wall, receive on the outside of the foot nearest an imaginary touchline, and take your first touch forward down the line. Two touches, then an inside hook back.",cues:["First touch forward, not across","Hips facing up the field"]},
+   2:{name:"Cut in and shoot",text:"Dribble at the chair from a wide angle, cut inside across it, and strike low with your far foot into a taped square on the wall.",cues:["Cut across the defender’s front foot","Strike within two touches of the cut"]},
+   3:{name:"Receive straight into 1v1",text:"Receive off the wall with your first touch going at the chair, then straight into the move of the week and escape. No stopping between receive and move.",cues:["The receive sets up the move"]}},
+ ob:{label:"Outside back",1:{name:"Back-foot receive and line pass",text:"Receive across your body with your back foot and play a firm, low pass into a taped target down the line.",cues:["Open up before the ball arrives","Two touches max"]},
+   2:{name:"Escape the press",text:"Chair right in front of you. Receive and take your first touch away from it with the outside of the foot, then drive into space for three touches.",cues:["Touch away from pressure","Head up on the drive"]},
+   3:{name:"Overlap and deliver",text:"Dribble from deep, two touches wide, and hit a low cross into a taped target. Alternate feet each rep.",cues:["Cross in two touches","Strike through the middle of the ball"]}},
+ am:{label:"Attacking mid",1:{name:"Half-turn receive",text:"Side-on to the wall. Receive with your back foot and take your first touch forward into the room.",cues:["Hips open","First touch forward"]},
+   2:{name:"Scan and turn",text:"Check a shoulder before every return. If the space is clear, turn; if not, play it back one-touch. Call it out loud before the ball arrives.",cues:["Check, decide, then receive"]},
+   3:{name:"Receive, turn, play",text:"Receive and turn in one touch, then pass into a taped target on the wall within three seconds.",cues:["Three seconds from receive to pass"]}},
+ st:{label:"Striker",1:{name:"Back to goal",text:"Face the wall. Receive with your sole and hold it, ball on your far foot as if a defender is on your back, then roll off and play it back.",cues:["Wide base, arm out","Ball on the foot farthest from the defender"]},
+   2:{name:"Spin off and finish",text:"Wall pass, back to goal. First touch spins you around an imaginary defender, second touch is a low strike into a taped target.",cues:["Turn on the first touch","Low and hard"]},
+   3:{name:"First-touch finish",text:"Passes at different speeds. Set it with your first touch, finish with your second into a taped target. Both feet. Count goals out of 20.",cues:["Set it out of your feet, then strike"]}}
+};
+
+const JUG=[null,
+ "One-bounce juggling: one bounce between every touch, alternating feet. When that’s easy, two touches between bounces.",
+ "Strong foot only, ball from your hands. Ten attempts; record your best.",
+ "Weak foot only, ball from your hands. Ten attempts; record your best.",
+ "Thigh-foot: thigh, foot, thigh, foot. Both sides.",
+ "100-touch challenge: how fast can you get 100 total touches with no hands? Drops are fine; count every touch.",
+ "Alternating feet only: right, left, right, left.",
+ "Low juggling: every touch stays below your knee.",
+ "Head work: toss and head it back up, then foot-thigh-head patterns.",
+ "No hands: start every attempt by flicking the ball up from the ground.",
+ "The cycle: laces, thigh, head, thigh, laces. Count full cycles.",
+ "Walking juggles: cover the length of your space and back without a drop.",
+ "High-low: one touch head-high, one touch low. Control the height.",
+ "Final attempts."
+];
+
+const TEST_ITEMS=[
+ ["Juggling max","Ball starts in your hands, any surface except hands and arms. Best of 3 attempts. Log it as “Best juggling today.”"],
+ ["Weak-foot juggling","Weak foot only (no thighs), ball from your hands. Best of 3. Log it as weak-foot juggling."],
+ ["Wall passes in 30 s","Line 3 yards (9 ft) from a solid wall. Two touches max each time, any foot, every touch behind the line. Count passes that hit the wall. Best of 2."],
+ ["Figure-8 in 30 s","Two markers 3 yards apart. Dribble a figure 8 and count every marker you go around. Best of 2."]
+];
+
+/* ---------- Build a session ---------- */
+function demo(key){const u=DEMOS[key];return (typeof u==="string"&&u.startsWith("https://"))?u:"";}
+function blocksFor(s){
+  const p=phaseOf(s.w),pp=Math.min(p,3),test=TESTS.includes(s.code),out=[];
+  const W=WARM[pp];
+  out.push({title:"Ball mastery warm-up",min:6,rx:W.rx,timer:W.timer,text:W.note||"",items:W.items});
+  if(test){
+    const which=s.w===1?"Baseline":s.w===7?"Midpoint":"Final";
+    out.push({title:which+" tests",min:15,focus:"Test day",rx:"Four tests, same setup every time. Rest a minute between attempts.",steps:TEST_ITEMS,timer:{work:30,rest:60,rounds:2},timerLabel:"30-second test timer",text:"Log every number in the form today; the test fields are at the bottom."});
+  }
+  if(s.d==="Mon"){
+    const m=MON[s.w],r=MON_RX[pp];
+    out.push({title:m.name,min:test?10:10,focus:"Touch of the week",rx:test?"3 sets × 2 min, 30 s rest.":(m.rx||r[0]),timer:test?{work:120,rest:30,rounds:3}:(m.timer||r[1]),text:m.text,cues:m.cues,demo:demo("mon-"+s.w),setup:"Solid wall, 3–6 yards away."});
+    if(!test){const b=MON_B[pp];out.push({title:b.name,min:8,rx:b.rx,timer:b.timer,text:b.text,cues:b.cues});
+      out.push(jug(s,5));}
+  } else if(s.d==="Tue"){
+    const t=TUE[s.w],r=TUE_RX[pp];
+    out.push({title:"Square up, sell, escape",min:12,focus:"Move of the week: "+t.name,rx:r[0],timer:r[1],sse:true,text:t.text,cues:t.cues,demo:demo("tue-"+s.w),setup:"A chair is the defender. Start 5 yards away, or as far as your space allows."});
+    const b=TUE_B[pp];out.push({title:b.name,min:8,rx:b.rx,timer:b.timer,text:b.text,cues:b.cues});
+    out.push(jug(s,5));
+  } else {
+    if(test){
+      out.push({title:"Showcase",min:8,text:"Film one rep each: your best 1v1 move on each foot and your best turn. Send the clips to Coach.",cues:["Square up, sell, escape","Compare it to your first week; you’ll see it"]});
+    } else {
+      const t=THU[s.w],r=THU_RX[pp];
+      out.push({title:t.name,min:10,focus:"Turn of the week",rx:r[0],timer:r[1],text:t.text,cues:t.cues,demo:demo("thu-"+s.w),setup:"Two lines (tape, shoes or towels) 5 yards apart."});
+      out.push({pos:true,min:6,pp});
+      out.push(jug(s,8));
+    }
+  }
+  return out;
+}
+function jug(s,min){
+  const thu=s.d==="Thu";
+  return {title:"Juggling",min,focus:"Juggling challenge of the week",
+    rx:thu?"Record day: 4 min on the challenge, then 3 attempts at your max and 3 at your weak-foot max.":"5 minutes on the weekly challenge.",
+    timer:thu?{work:90,rest:30,rounds:4}:{work:60,rest:15,rounds:4},
+    text:JUG[s.w],cues:["Log your best juggle of the day, every session"]};
+}
+
+/* ---------- Rendering ---------- */
+const $=s=>document.querySelector(s);
+const store={get(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let pos=store.get("awt-pos","");if(!POS[pos])pos="";
+let done=store.get("awt-done",{});if(typeof done!=="object"||!done)done={};
+let checks=store.get("awt-checks",{});if(typeof checks!=="object"||!checks)checks={};
+let view="session";
+const today=new Date();today.setHours(0,0,0,0);
+function findDefault(){
+  const t=today.getTime();
+  const exact=SESSIONS.find(s=>s.date.getTime()===t);
+  if(exact)return [exact.i,"today"];
+  if(t<SESSIONS[0].date.getTime())return [0,"before"];
+  const next=SESSIONS.find(s=>s.date.getTime()>t);
+  if(!next)return [SESSIONS.length-1,"after"];
+  return [next.i,"next"];
+}
+const [defIdx,defState]=findDefault();
+let sel=defIdx;
+const todayIdx=defState==="today"?defIdx:-1;
+
+function fmtDate(d,long){return (long?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+", ":"")+MONTHS[d.getMonth()]+" "+d.getDate();}
+function statusLine(s){
+  if(s.i===todayIdx)return "Today’s session.";
+  if(s.i===defIdx){
+    if(defState==="before")return "The program starts Monday, Nov 30. This is your first session.";
+    if(defState==="after")return "The program is finished. Great winter.";
+    return "Next session. Missed one this week? Make it up today and log the session you made up.";
+  }
+  if(s.date<today)return done[s.code]?"Already logged on this phone.":"Past session. Doing it as a make-up? Log it under this session’s name.";
+  return "Upcoming session.";
+}
+function strip(){
+  let h='<div class="strip" role="grid" aria-label="All 39 sessions"><div></div>';
+  for(let w=1;w<=13;w++)h+='<div class="wk">'+w+'</div>';
+  for(const [d] of DAYS){
+    h+='<div class="lab">'+d+'</div>';
+    for(let w=1;w<=13;w++){
+      const s=SESSIONS.find(x=>x.w===w&&x.d===d);
+      const cls=["cell"];if(done[s.code])cls.push("done");if(s.i===todayIdx)cls.push("today");if(s.i===sel)cls.push("sel");if(TESTS.includes(s.code))cls.push("test");
+      h+='<button class="'+cls.join(" ")+'" data-i="'+s.i+'" aria-label="'+DAYNAMES[d]+', '+fmtDate(s.date)+(done[s.code]?", logged":"")+'"'+(s.i===sel?' aria-current="true"':'')+'></button>';
+    }
+  }
+  h+='</div><div class="phases" aria-hidden="true"><span></span><span style="grid-column:span 4">Foundation</span><span style="grid-column:span 4">Speed</span><span style="grid-column:span 4">Game speed</span><span>Test</span></div>';
+  h+='<p class="legend"><b style="background:var(--red)"></b>Showing <b style="border:2.5px solid var(--red)"></b>Today <b style="background:var(--done)"></b>Logged <b style="background:var(--amber);border-radius:50%"></b>Test day</p>';
+  return h;
+}
+function blockHTML(b,n,s){
+  const key=s.code+"#"+n;
+  const ck='<label class="check"><input type="checkbox" data-ck="'+key+'"'+(checks[key]?" checked":"")+'> Done</label>';
+  if(b.pos){
+    const P=POS[pos];
+    if(!P){
+      let pk='<div class="picker">';for(const k of Object.keys(POS))pk+='<button class="btn" data-pick="'+k+'">'+POS[k].label+'</button>';pk+='</div>';
+      return '<section class="block"><div class="rail"><div class="n">'+n+'</div><div class="m">'+b.min+' min</div></div><div><span class="focus">Position block</span><h3>Pick your position</h3><p>Your Thursday block depends on where you play. Pick once; this phone remembers it.</p>'+pk+'</div></section>';
+    }
+    const x=P[b.pp];
+    b={title:x.name,min:6,focus:"Position block: "+P.label,rx:"3 × 90 s, 30 s rest",timer:{work:90,rest:30,rounds:3},text:x.text,cues:x.cues};
+  }
+  let h='<section class="block"><div class="rail"><div class="n">'+n+'</div><div class="m">'+b.min+' min</div></div><div>';
+  if(b.focus)h+='<span class="focus">'+b.focus+'</span>';
+  h+='<h3>'+b.title+'</h3>';
+  if(b.rx)h+='<p class="rx">'+b.rx+'</p>';
+  if(b.setup)h+='<p class="note">Setup: '+b.setup+'</p>';
+  if(b.sse){h+='<ol>';for(const [a,t] of SSE)h+='<li><strong>'+a+'.</strong> '+t+'</li>';h+='</ol><p><strong>This week’s move.</strong> '+b.text+'</p>';}
+  else if(b.text)h+='<p>'+b.text+'</p>';
+  if(b.items){h+='<ol>';for(const it of b.items)h+='<li>'+it+'</li>';h+='</ol>';}
+  if(b.steps){h+='<ol>';for(const [a,t] of b.steps)h+='<li><strong>'+a+'.</strong> '+t+'</li>';h+='</ol>';}
+  if(b.cues&&b.cues.length){h+='<div class="cues">';for(const c of b.cues)h+='<div>'+c+'</div>';h+='</div>';}
+  h+='<div class="row">';
+  if(b.timer)h+='<button class="btn" data-timer=\''+JSON.stringify(b.timer)+'\' data-title="'+b.title.replace(/"/g,"&quot;")+'">'+(b.timerLabel||"Start timer")+(b.timer.random?" (random cues)":"")+'</button>';
+  if(b.demo)h+='<a class="btn" href="'+b.demo+'" target="_blank" rel="noopener">Watch demo</a>';
+  h+=ck+'</div></div></section>';
+  return h;
+}
+function renderSession(){
+  const s=SESSIONS[sel],p=phaseOf(s.w);
+  let h='<h1 class="date">'+fmtDate(s.date,true)+'</h1>';
+  h+='<p class="kick">'+THEMES[s.d]+'</p>';
+  h+='<p class="sub">Week '+s.w+' of 13, '+PHASES[p].name+' phase. '+PHASES[p].note+'</p>';
+  if(s.w===5)h+='<p class="sub">Holiday week: do the three sessions on any three days, and log each one by its name.</p>';
+  h+='<p class="status">'+statusLine(s)+'</p>';
+  h+=strip();
+  const bl=blocksFor(s);let total=0;
+  bl.forEach((b,k)=>{h+=blockHTML(b,k+1,s);total+=b.min;});
+  h+='<section class="log"><h2>Log it</h2><p>About '+total+' minutes. When you finish, log <strong>'+s.label+'</strong> with your best juggle of the day. Coach sees every log.</p>';
+  if(FORM_PREFILL.startsWith("https://")){
+    h+='<div class="row"><a class="btn primary" id="logBtn" href="'+FORM_PREFILL+encodeURIComponent(s.label)+'" target="_blank" rel="noopener">Log this session</a>'+(done[s.code]?'<span class="note">Logged on this phone.</span>':'')+'</div>';
+  } else {
+    h+='<p class="note">Coach will share the log link. Until then, mark it here so you remember.</p><div class="row"><button class="btn primary" id="markBtn">'+(done[s.code]?"Marked done":"Mark done on this phone")+'</button></div>';
+  }
+  h+='</section>';
+  $("#main").innerHTML=h;
+}
+function renderPlan(){
+  $("#main").innerHTML=`<div class="prose">
+<h2>How it works</h2>
+<p>Three sessions a week, about 30 minutes each, from Monday, Nov 30 through Thursday, Feb 25. Mondays are first touch. Tuesdays are 1v1: square up, sell the fake, escape with the outside of the foot. Thursdays are turns, a block for your position, and a juggling record attempt. Every session ends with juggling.</p>
+<p>Each week brings a new touch, a new move, a new turn and a new juggling challenge. The drills around them get faster and less predictable as the winter goes on.</p>
+<h2>The phases</h2>
+<h3>Foundation, weeks 1–4</h3><p>Learn it clean at 60–75% speed, both feet. Slow is fine. Sloppy is not.</p>
+<h3>Speed, weeks 5–8</h3><p>Same skills at full speed, and every rep ends with an explosive escape. Week 5 is the holiday week: three sessions, any three days.</p>
+<h3>Game speed, weeks 9–12</h3><p>The timer throws random cues at you, and you score yourself against the clock. You stop rehearsing and start reacting.</p>
+<h3>Prove it, week 13</h3><p>Best-of sessions Monday and Tuesday, final testing Thursday, Feb 25.</p>
+<h2>Your space and gear</h2>
+<p>You need about 4×4 yards (12×12 feet), a ball, a solid wall, a chair and six markers. Shoes, water bottles or plastic cups work fine as markers. A basement, a garage floor or a cleared room is enough.</p>
+<p>The best wall is concrete or brick: a basement wall or the outside of the house. Don’t use a garage door, drywall, or anything with a window in it. No wall? A rebounder works. Otherwise use the out-of-the-air version on Mondays (toss and receive), or get someone at home to pass with you.</p>
+<p>A size 4 ball or a futsal ball is easier indoors: less bounce, less noise. Ask before you start kicking a ball in the house.</p>
+<h2>Logging</h2>
+<p>Log every session within 24 hours with the button at the bottom of the session page. Coach sees each log, the date, your effort and your juggling number. Three logged sessions a week is the standard.</p>
+<p>Missed a day? Make it up on Wednesday, Friday or the weekend, then log the session you made up. Extra work counts too: pick “Bonus session” in the form.</p>
+<p>Coach will ask for short videos now and then, and the Red and Black juggling tiers need a video.</p>
+<h2>The timer</h2>
+<p>Every block has a timer. It counts you in, beeps high at the start of each set and low at each rest. In random-cue mode, a quick double beep in the middle of a set is your cue to react. Turn your volume up.</p>
+</div>`;
+}
+function renderTests(){
+  let t='';for(const [a,b] of TEST_ITEMS)t+='<h3>'+a+'</h3><p>'+b+'</p>';
+  $("#main").innerHTML=`<div class="prose">
+<h2>Test days</h2>
+<p>Monday, Nov 30 (baseline), Monday, Jan 11 (midpoint) and Thursday, Feb 25 (final). Same four tests, same setup, every time, so the numbers mean something.</p>
+${t}
+<h2>Juggling club</h2>
+<p>Your tier goes on the board. Total juggles use any surface except hands and arms; weak foot means that foot only. Red and Black need a video sent to Coach.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Tier</th><th>Total juggles</th><th>Weak foot only</th><th>Proof</th></tr></thead>
+<tbody>
+<tr><td class="tier"><span class="sw" style="background:#ffffff"></span>White</td><td>25</td><td>none</td><td>Log it</td></tr>
+<tr><td class="tier"><span class="sw" style="background:#9aa1a9"></span>Grey</td><td>50</td><td>10</td><td>Log it</td></tr>
+<tr><td class="tier"><span class="sw" style="background:#b3141d"></span>Red</td><td>100</td><td>25</td><td>Video</td></tr>
+<tr><td class="tier"><span class="sw" style="background:#000000"></span>Black</td><td>200</td><td>50</td><td>Video</td></tr>
+</tbody></table></div>
+</div>`;
+}
+function render(){
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));
+  if(view==="session")renderSession();else if(view==="plan")renderPlan();else renderTests();
+}
+
+/* ---------- Events ---------- */
+$("#pos").value=pos;
+$("#pos").addEventListener("change",e=>{pos=POS[e.target.value]?e.target.value:"";store.set("awt-pos",pos);render();});
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{view=b.dataset.view;render();}));
+$("#main").addEventListener("click",e=>{
+  const c=e.target.closest(".cell");if(c){sel=+c.dataset.i;render();return;}
+  const pk=e.target.closest("[data-pick]");if(pk){pos=pk.dataset.pick;$("#pos").value=pos;store.set("awt-pos",pos);render();return;}
+  const tb=e.target.closest("[data-timer]");if(tb){try{startTimer(JSON.parse(tb.dataset.timer),tb.dataset.title)}catch(err){}return;}
+  if(e.target.id==="markBtn"){const s=SESSIONS[sel];done[s.code]=!done[s.code];store.set("awt-done",done);render();return;}
+  if(e.target.id==="logBtn"){const s=SESSIONS[sel];done[s.code]=true;store.set("awt-done",done);setTimeout(render,300);}
+});
+$("#main").addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.ck;if(k){checks[k]=e.target.checked;store.set("awt-checks",checks);}});
+
+/* ---------- Interval timer ---------- */
+let T=null,ac=null,wake=null;
+function audio(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();}catch(e){ac=null;}}
+function beep(f,d,times){if(!ac)return;times=times||1;for(let k=0;k<times;k++){try{const o=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+k*(d+0.07);o.type="square";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.22,t0+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t0+d);o.connect(g);g.connect(ac.destination);o.start(t0);o.stop(t0+d+0.02);}catch(e){}}}
+function wakeOn(){try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(w=>{wake=w}).catch(()=>{});}catch(e){}}
+function wakeOff(){try{if(wake)wake.release();}catch(e){}wake=null;}
+function startTimer(cfg,title){
+  stopTimer();audio();wakeOn();
+  T={work:cfg.work,rest:cfg.rest,rounds:cfg.rounds,random:!!cfg.random,title,round:1,phase:"ready",end:performance.now()+5000,paused:false,rem:0,nextCue:0,lastSec:null,iv:null};
+  $("#tTitle").textContent=title+(T.random?" (random cues)":"");
+  $("#tPause").textContent="Pause";
+  $("#timer").classList.add("on");
+  T.iv=setInterval(tick,100);tick();
+}
+function tick(){
+  if(!T||T.paused)return;
+  const now=performance.now();let rem=T.end-now;
+  if(T.phase==="work"&&T.random&&now>=T.nextCue&&rem>1500){cue();T.nextCue=now+3000+Math.random()*4000;}
+  const sec=Math.ceil(rem/1000);
+  if(T.phase!=="work"&&sec>0&&sec<=3&&sec!==T.lastSec)beep(660,0.08);
+  T.lastSec=sec;
+  if(rem<=0){
+    if(T.phase==="work"){
+      if(T.round>=T.rounds){finish();return;}
+      T.phase="rest";T.end=now+T.rest*1000;beep(440,0.35);
+    } else {
+      if(T.phase==="rest")T.round++;
+      T.phase="work";T.end=now+T.work*1000;T.nextCue=now+2500+Math.random()*3500;beep(990,0.25);
+    }
+    rem=T.end-now;
+  }
+  draw(Math.max(0,rem));
+}
+function cue(){beep(1320,0.09,2);const el=$("#timer");el.classList.add("cue");setTimeout(()=>el.classList.remove("cue"),350);}
+function draw(rem){
+  const s=Math.ceil(rem/1000);$("#tClock").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+  const el=$("#timer");el.classList.toggle("work",T.phase==="work");
+  $("#tPhase").textContent=T.phase==="ready"?"Get ready":(T.phase==="work"?"Work":"Rest")+", set "+T.round+" of "+T.rounds;
+}
+function finish(){clearInterval(T.iv);beep(990,0.18,3);$("#tPhase").textContent="Block done";$("#tClock").textContent="0:00";$("#timer").classList.remove("work");T.done=true;wakeOff();}
+function stopTimer(){if(T&&T.iv)clearInterval(T.iv);T=null;$("#timer").classList.remove("on","work","cue");wakeOff();}
+$("#tStop").addEventListener("click",stopTimer);
+$("#tPause").addEventListener("click",()=>{
+  if(!T||T.done)return;
+  if(!T.paused){T.paused=true;T.rem=T.end-performance.now();$("#tPause").textContent="Resume";}
+  else{T.paused=false;T.end=performance.now()+T.rem;$("#tPause").textContent="Pause";}
+});
+
+render();
+</script>
+</body>
+</html>
