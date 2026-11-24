@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Antler Winter Touch</title>
+<title>Antler Winter Technical Program</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -102,14 +102,12 @@ td.tier{font:700 19px "Barlow Condensed",sans-serif}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="mark"><i aria-hidden="true"></i>Antler Winter Touch</div>
+    <div class="mark"><i aria-hidden="true"></i>Antler Winter Technical Program</div>
     <label class="pos">Position
       <select id="pos">
         <option value="">Choose</option>
-        <option value="wing">Winger</option>
-        <option value="ob">Outside back</option>
-        <option value="am">Attacking mid</option>
-        <option value="st">Striker</option>
+        <option value="central">Central (CB, CM, AM, ST)</option>
+        <option value="wide">Wide (wingers, outside backs)</option>
       </select>
     </label>
   </header>
@@ -250,18 +248,14 @@ const THU_RX={1:["5 × 45 s, 30 s rest. Two lines 5 yards apart; dribble to a li
   3:["6 × 45 s, 30 s rest, random-cue mode. Dribble anywhere; on every double beep, turn 180 immediately and accelerate.",{work:45,rest:30,rounds:6,random:true}]};
 
 const POS={
- wing:{label:"Winger",1:{name:"Down the line",text:"Pass into the wall, receive on the outside of the foot nearest an imaginary touchline, and take your first touch forward down the line. Two touches, then an inside hook back.",cues:["First touch forward, not across","Hips facing up the field"]},
-   2:{name:"Cut in and shoot",text:"Dribble at the chair from a wide angle, cut inside across it, and strike low with your far foot into a taped square on the wall.",cues:["Cut across the defender’s front foot","Strike within two touches of the cut"]},
-   3:{name:"Receive straight into 1v1",text:"Receive off the wall with your first touch going at the chair, then straight into the move of the week and escape. No stopping between receive and move.",cues:["The receive sets up the move"]}},
- ob:{label:"Outside back",1:{name:"Back-foot receive and line pass",text:"Receive across your body with your back foot and play a firm, low pass into a taped target down the line.",cues:["Open up before the ball arrives","Two touches max"]},
-   2:{name:"Escape the press",text:"Chair right in front of you. Receive and take your first touch away from it with the outside of the foot, then drive into space for three touches.",cues:["Touch away from pressure","Head up on the drive"]},
-   3:{name:"Overlap and deliver",text:"Dribble from deep, two touches wide, and hit a low cross into a taped target. Alternate feet each rep.",cues:["Cross in two touches","Strike through the middle of the ball"]}},
- am:{label:"Attacking mid",1:{name:"Half-turn receive",text:"Side-on to the wall. Receive with your back foot and take your first touch forward into the room.",cues:["Hips open","First touch forward"]},
-   2:{name:"Scan and turn",text:"Check a shoulder before every return. If the space is clear, turn; if not, play it back one-touch. Call it out loud before the ball arrives.",cues:["Check, decide, then receive"]},
-   3:{name:"Receive, turn, play",text:"Receive and turn in one touch, then pass into a taped target on the wall within three seconds.",cues:["Three seconds from receive to pass"]}},
- st:{label:"Striker",1:{name:"Back to goal",text:"Face the wall. Receive with your sole and hold it, ball on your far foot as if a defender is on your back, then roll off and play it back.",cues:["Wide base, arm out","Ball on the foot farthest from the defender"]},
-   2:{name:"Spin off and finish",text:"Wall pass, back to goal. First touch spins you around an imaginary defender, second touch is a low strike into a taped target.",cues:["Turn on the first touch","Low and hard"]},
-   3:{name:"First-touch finish",text:"Passes at different speeds. Set it with your first touch, finish with your second into a taped target. Both feet. Count goals out of 20.",cues:["Set it out of your feet, then strike"]}}
+ central:{label:"Central channel",who:"center backs, center mids, attacking mids and strikers",
+   1:{name:"Half-turn and play forward",text:"Side-on to the wall with a taped target 2 yards to one side. Check a shoulder, receive with your back foot, take your first touch forward, then pass into the target. Center backs and center mids: that pass is your line-breaking ball. Attacking mids and strikers: a forward first touch means you’re facing goal.",cues:["Check before the ball hits the wall","Hips open, first touch forward","Two touches max: receive, play"]},
+   2:{name:"Back to pressure: hold, turn or set",text:"Face the wall with the chair right behind you as the defender. Before every return, check a shoulder and call it out loud: “turn” or “set.” Turn: spin off the chair on your first touch. Set: shield it with your sole, ball on your far foot, then play it back one-touch.",cues:["Wide base, arm out","Ball on the foot farthest from the defender","Decide before the ball arrives"]},
+   3:{name:"Receive, turn, finish or play",random:true,text:"Receive and turn in one touch, then within 3 seconds strike (strikers and attacking mids) or pass (center backs and center mids) into a taped target. A double beep means the defender is tight on your back: set it back instead of turning.",cues:["Three seconds from receive to finish or pass","The beep is pressure: protect the ball"]}},
+ wide:{label:"Wide channel",who:"wingers and outside backs",
+   1:{name:"Receive down the line",text:"Imagine a touchline on one side of you. Pass into the wall, receive on the back foot nearest that line, take your first touch forward down it, two touches, then a low cross into a taped target. Wingers start higher, outside backs deeper; the touch is the same.",cues:["Hips open up the field","First touch forward, not across","Cross within two touches"]},
+   2:{name:"Escape the press, then go or cut",text:"Chair right in front of you as the press. Receive and take your first touch away from it with the outside of the foot, drive three touches, then either keep going down the line or cut inside and strike low with your far foot into a taped target.",cues:["Touch away from pressure","Head up on the drive","Cut across the defender’s front foot"]},
+   3:{name:"Receive straight into 1v1",random:true,text:"Receive off the wall with your first touch going at the chair, straight into the move of the week, escape, and deliver a low cross into the target. On a double beep, the defender has shown you inside: cut in and strike instead.",cues:["The receive sets up the move","No stopping between receive, move and delivery"]}}
 };
 
 const JUG=[null,
@@ -330,7 +324,10 @@ function jug(s,min){
 /* ---------- Rendering ---------- */
 const $=s=>document.querySelector(s);
 const store={get(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-let pos=store.get("awt-pos","");if(!POS[pos])pos="";
+let pos=store.get("awt-pos","");
+const OLDPOS={wing:"wide",ob:"wide",am:"central",st:"central"};
+if(OLDPOS[pos]){pos=OLDPOS[pos];store.set("awt-pos",pos);}
+if(!POS[pos])pos="";
 let done=store.get("awt-done",{});if(typeof done!=="object"||!done)done={};
 let checks=store.get("awt-checks",{});if(typeof checks!=="object"||!checks)checks={};
 let view="session";
@@ -381,10 +378,10 @@ function blockHTML(b,n,s){
     const P=POS[pos];
     if(!P){
       let pk='<div class="picker">';for(const k of Object.keys(POS))pk+='<button class="btn" data-pick="'+k+'">'+POS[k].label+'</button>';pk+='</div>';
-      return '<section class="block"><div class="rail"><div class="n">'+n+'</div><div class="m">'+b.min+' min</div></div><div><span class="focus">Position block</span><h3>Pick your position</h3><p>Your Thursday block depends on where you play. Pick once; this phone remembers it.</p>'+pk+'</div></section>';
+      return '<section class="block"><div class="rail"><div class="n">'+n+'</div><div class="m">'+b.min+' min</div></div><div><span class="focus">Position block</span><h3>Pick your position</h3><p>Your Thursday block depends on your channel. Central: center backs, center mids, attacking mids and strikers. Wide: wingers and outside backs. Pick once; this phone remembers it.</p>'+pk+'</div></section>';
     }
     const x=P[b.pp];
-    b={title:x.name,min:6,focus:"Position block: "+P.label,rx:"3 × 90 s, 30 s rest",timer:{work:90,rest:30,rounds:3},text:x.text,cues:x.cues};
+    b={title:x.name,min:6,focus:"Position block: "+P.label+" ("+P.who+")",rx:"3 × 90 s, 30 s rest"+(x.random?", random-cue mode":""),timer:{work:90,rest:30,rounds:3,random:!!x.random},text:x.text,cues:x.cues};
   }
   let h='<section class="block"><div class="rail"><div class="n">'+n+'</div><div class="m">'+b.min+' min</div></div><div>';
   if(b.focus)h+='<span class="focus">'+b.focus+'</span>';
